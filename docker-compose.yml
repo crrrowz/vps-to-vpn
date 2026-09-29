@@ -1,0 +1,17 @@
+services:
+  tunnel-deployer:
+    build: .
+    env_file:
+      - .env
+    environment:
+      - VPS_HOST=${VPS_HOST:-}
+      - SSH_PORT=${SSH_PORT:-22}
+      - SSH_USER=${SSH_USER:-root}
+      - SSH_PASS=${SSH_PASS:-}
+      - PROXY_USER=${PROXY_USER:-}
+      - PROXY_PASS=${PROXY_PASS:-}
+      - HTTP_PORT=${HTTP_PORT:-8443}
+      - SOCKS5_PORT=${SOCKS5_PORT:-1080}
+      - ENABLE_HTTPS=${ENABLE_HTTPS:-false}
+    stdin_open: true
+    tty: true

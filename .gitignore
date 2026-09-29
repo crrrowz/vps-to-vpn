@@ -1,0 +1,25 @@
+# Environment and credentials
+.env
+*.key
+*.crt
+*.pem
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.venv/
+env/
+venv/
+
+# Docker
+.docker/
+
+# OS and Editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+PowerShellHistory.txt
