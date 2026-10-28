@@ -483,8 +483,8 @@ def main():
     print(f"2) SOCKS5 Standard : {public_ip}:{socks5_port}:{user}:{passwd}")
     print(f"   SOCKS5 URL      : socks5://{user}:{passwd}@{public_ip}:{socks5_port}")
     print("-" * 58)
-    print("TEST COMMANDS:")
-    print(f"• HTTP(S): curl -x {http_proto}://{user}:{passwd}@{public_ip}:{http_port} https://api.ipify.org -k")
+    proxy_insecure_flag = " --proxy-insecure" if use_https else ""
+    print(f"• HTTP(S): curl{proxy_insecure_flag} -x {http_proto}://{user}:{passwd}@{public_ip}:{http_port} https://api.ipify.org -k")
     print(f"• SOCKS5 : curl --socks5 {public_ip}:{socks5_port} --proxy-user {user}:{passwd} https://api.ipify.org")
     print("="*58 + "\n")
 

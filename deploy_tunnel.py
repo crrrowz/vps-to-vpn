@@ -50,27 +50,29 @@ def generate_random_string(length=10):
 def run_ssh_command(host, port, user, password, remote_cmd):
     """Executes a command via standard ssh client using temporary askpass."""
     is_windows = sys.platform.startswith("win")
+    devnull_path = "NUL" if is_windows else "/dev/null"
     
     if is_windows:
         askpass_file = os.path.join(tempfile.gettempdir(), f"askpass_{secrets.token_hex(4)}.bat")
         with open(askpass_file, "w") as f:
-            f.write(f"@echo {password}\n")
+            f.write(f'@"{sys.executable}" -c "import os; print(os.environ.get(\'SSH_TEMP_PASS\', \'\'))"\n')
     else:
         askpass_file = os.path.join(tempfile.gettempdir(), f"askpass_{secrets.token_hex(4)}.sh")
         with open(askpass_file, "w") as f:
-            f.write(f"#!/bin/sh\necho '{password}'\n")
+            f.write('#!/bin/sh\nprintf "%s\\n" "$SSH_TEMP_PASS"\n')
         os.chmod(askpass_file, 0o700)
 
     env = os.environ.copy()
     env["SSH_ASKPASS"] = askpass_file
     env["SSH_ASKPASS_REQUIRE"] = "force"
+    env["SSH_TEMP_PASS"] = password
     env["DISPLAY"] = "dummy:0"
 
     ssh_cmd = [
         "ssh",
         "-p", str(port),
         "-o", "StrictHostKeyChecking=no",
-        "-o", "UserKnownHostsFile=/dev/null",
+        "-o", f"UserKnownHostsFile={devnull_path}",
         "-o", "PreferredAuthentications=password",
         "-o", "PubkeyAuthentication=no",
         f"{user}@{host}",
@@ -156,7 +158,7 @@ def main():
 
     if success:
         print("\n" + out)
-        print("[✓] Deployment Complete! Both HTTP(S) and SOCKS5 proxies are live and active.")
+        print("[+] Deployment Complete! Both HTTP(S) and SOCKS5 proxies are live and active.")
     else:
         print(f"[-] Deployment failed:\n{err}\n{out}")
 
